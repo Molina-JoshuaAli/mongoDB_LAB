@@ -1,30 +1,50 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PokemonserviceService } from '../pokemonservice.service';
+
 @Component({
   selector: 'app-pokemon-form',
-  imports: [ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './pokemon-form.component.html',
-  styleUrl: './pokemon-form.component.css'
+  styleUrls: ['./pokemon-form.component.css']
 })
-export class PokemonFormComponent {
-  private formBuilder = inject(FormBuilder);
-  pokemonservice = inject(PokemonserviceService);
+export class PokemonFormComponent implements OnInit {
 
-  pokemonForm = this.formBuilder.nonNullable.group({
-    name: ['', Validators.required],
-    type: ['', Validators.required],
-    level: ['', Validators.required],
-    nature: ['', Validators.required],
-  })
+  private pokemonService = inject(PokemonserviceService);
 
-  onSubmit(){
-    if(this.pokemonForm.valid){
-      this.pokemonservice.savePokemon(this.pokemonForm.getRawValue()).subscribe(() => {
-        this.pokemonservice.fetchPokemon(); //Refreshes Data
+  pokemon = {
+    name: '',
+    type: '',
+    level: '',
+    nature: ''
+  };
 
-        this.pokemonForm.reset; //Clear Form
-      })
+  pokemonList = this.pokemonService.pokemonList;
+
+  ngOnInit() {
+    this.pokemonService.fetchPokemon();
+  }
+
+  submitPokemon() {
+    if (!this.pokemon.name || !this.pokemon.type) {
+      alert('Name and Type are required!');
+      return;
     }
+
+    this.pokemonService.savePokemon(this.pokemon).subscribe({
+      next: () => {
+        this.pokemonService.fetchPokemon();
+
+        this.pokemon = {
+          name: '',
+          type: '',
+          level: '',
+          nature: ''
+        };
+      },
+      error: (err) => console.error('Save error:', err)
+    });
   }
 }

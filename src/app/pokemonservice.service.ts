@@ -9,7 +9,6 @@ export class PokemonserviceService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/api/pokemon';
 
-  //state management using signals
   pokemonList = signal<any[]>([]);
 
   fetchPokemon(){

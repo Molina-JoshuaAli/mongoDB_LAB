@@ -1,19 +1,24 @@
-<form [formGroup]="pokemonForm" (ngSubmit)="onSubmit()">
-    <input formControlName="name" placeholder="Pokemon Name"> 
-    <input formControlName="type" placeholder="Pokemon Type"> 
-    <input type="number" formControlName="level" placeholder="Pokemon Level"> 
-    <input formControlName="nature" placeholder="Pokemon Nature"> 
+<div class="container">
+  <h1>Gary's Pokémon Repository</h1>
 
-    <button type="submit" [disabled]="!pokemonForm.valid">
-        Add to Pokemon List
-    </button>
-</form>
+  <form (ngSubmit)="submitPokemon()" class="pokemon-form">
+    <input type="text" [(ngModel)]="pokemon.name" name="name" placeholder="Name" required>
+    <input type="text" [(ngModel)]="pokemon.type" name="type" placeholder="Type" required>
+    <input type="number" [(ngModel)]="pokemon.level" name="level" placeholder="Level">
+    <input type="text" [(ngModel)]="pokemon.nature" name="nature" placeholder="Nature">
 
-@for (p of pokemonservice.pokemonList(); track p._id) {
-    <div class="card">
-        <h3>{{ p.name }} (Lvl {{ p.level }})</h3>
-        <p>{{ p.type }} || {{ p.nature }}</p>
-    </div>
-} @empty {
-    <p>No Pokemon recorded.</p>
-}
+    <button type="submit">Add Pokémon</button>
+  </form>
+
+
+  <div *ngIf="pokemonList().length > 0" class="team">
+  <h2>Gary's Winning Team</h2>
+
+  <div class="card" *ngFor="let p of pokemonList()">
+    <h3>{{ p.name }}</h3>
+    <p><strong>Type:</strong> {{ p.type }}</p>
+    <p><strong>Level:</strong> {{ p.level }}</p>
+    <p><strong>Nature:</strong> {{ p.nature }}</p>
+  </div>
+</div>
+</div>
